@@ -1,53 +1,35 @@
 #include <iostream>
-#include <cmath>
+#include "shapes.h"
+
+std::ostream & operator<<(std::ostream& out, point3d point)
+{
+    out << "(" << point.x_ << ", " << point.y_ << ", " << point.z_ << ")";
+    return out;
+}
 
 int main()
 {
-    struct point3d
-    {
-        int x_ = 0;
-        int y_ = 0;
-        int z_ = 0;
-    };
+    point3d pointA = {1, 1, 0};
 
-    struct line3d
-    {
-        point3d a_;
-        point3d b_;
+    //test point b for line
+    point3d pointB = {5, 1, 0};
 
-        double length() const noexcept
-        {
-            int x = b_.x_ - a_.x_;
-            int y = b_.y_ - a_.y_;
-            int z = b_.z_ - a_.z_;
-            return sqrt(x * x + y * y + z * z);
-        };
-    };
+    //test point c for triangle
+    point3d pointC = {1, 4, 0};
 
-    struct triangle3d
-    {
-        point3d va_;
-        point3d vb_;
-        point3d vc_;
+    //test line
+    line3d lineA = { pointA, pointB };
+    lineA.length();
 
-        line3d a_to_b() const noexcept
-        { return line3d{va_, vb_}; }
+    //test triangle
+    triangle3d triangleA = triangle3d { pointA, pointB, pointC };
 
-        line3d b_to_c() const noexcept
-        { return line3d{vb_, vc_}; }
+    //output
+    std::cout << "point A: " << pointA << std::endl;
+    std::cout << "point B: " << pointB << std::endl;
 
-        line3d a_to_c() const noexcept
-        { return line3d{va_, vc_}; }
+    std::cout << "line A length: " << lineA.length() << std::endl;
 
-        line3d normal() const noexcept
-        {
-            //calculate cross product here
-            int n_Cross1 = va_.y_ * vb_.z_ - va_.z_ * vb_.y_;
-            int n_Cross2 = va_.z_ * vb_.x_ - va_.x_ * vb_.z_;
-            int n_Cross3 = va_.x_ * vb_.y_ - va_.y_ * vb_.x_;
-
-            //calculate normal here
-            return line3d{va_, point3d{n_Cross1, n_Cross2, n_Cross3}};
-        }
-    };
+    std::cout << "triangle info: A: " << triangleA.va_ << ", B: " << triangleA.vb_ << ", C: " << triangleA.vc_ << std::endl;
+    std::cout << triangleA.normal().b_ << std::endl;
 }

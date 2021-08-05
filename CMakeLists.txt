@@ -3,4 +3,4 @@ project(Project_Grade_8)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Project_Grade_8 main.cpp)
+add_executable(Project_Grade_8 main.cpp shapes.h)
