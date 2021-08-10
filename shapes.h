@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 
 struct point3d
@@ -56,6 +57,5 @@ struct triangle3d
         return line3d{va_, point3d{n_Cross1, n_Cross2, n_Cross3}};
     }
 };
-
 
 #endif //PROJECT_GRADE_8_SHAPES_H

@@ -1,5 +1,7 @@
 #include <iostream>
 #include "shapes.h"
+#include "color.h"
+#include "image.h"
 
 std::ostream & operator<<(std::ostream& out, point3d point)
 {
@@ -32,4 +34,16 @@ int main()
 
     std::cout << "triangle info: A: " << triangleA.va_ << ", B: " << triangleA.vb_ << ", C: " << triangleA.vc_ << std::endl;
     std::cout << triangleA.normal().b_ << std::endl;
+
+    int width = 640;
+    int height = 480;
+    Image image = Image(width, height);
+
+    for (int i = 0.0; i < width; i++) {
+        for (int j = 0.0; j < height; j++) {
+             image.set_pixel( i,j, Color{ (double)i / (height * width), (double)j / (height * width), (double)(i + j) / (width + height)});
+        }
+    }
+
+    image.save("raytrace.png");
 }
