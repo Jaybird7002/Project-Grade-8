@@ -2,6 +2,11 @@
 #include "shapes.h"
 #include "color.h"
 #include "image.h"
+#include "scene.h"
+
+Color gradiant(int x_, int y_, int width, int height) {
+    return Color{ (double)y_ / height, (double)y_ / height, .75};
+};
 
 std::ostream & operator<<(std::ostream& out, point3d point)
 {
@@ -35,13 +40,13 @@ int main()
     std::cout << "triangle info: A: " << triangleA.va_ << ", B: " << triangleA.vb_ << ", C: " << triangleA.vc_ << std::endl;
     std::cout << triangleA.normal().b_ << std::endl;
 
-    int width = 640;
-    int height = 480;
+    int width = 1280;
+    int height = 960;
     Image image = Image(width, height);
 
     for (int i = 0.0; i < width; i++) {
         for (int j = 0.0; j < height; j++) {
-             image.set_pixel( i,j, Color{ (double)i / (height * width), (double)j / (height * width), (double)(i + j) / (width + height)});
+            image.set_pixel(i,j, gradiant(i, j, width, height));
         }
     }
 

@@ -12,6 +12,11 @@
 
 struct point3d
 {
+    point3d(int x, int y, int z)
+    {
+
+    }
+
     int x_ = 0;
     int y_ = 0;
     int z_ = 0;
