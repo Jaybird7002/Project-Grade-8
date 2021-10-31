@@ -5,6 +5,8 @@
 #ifndef PROJECT_GRADE_8_COLOR_H
 #define PROJECT_GRADE_8_COLOR_H
 
+#include <iostream>
+
 struct Color
 {
     double red = 0;
@@ -20,6 +22,12 @@ inline Color operator*(double t, Color c)
 inline Color operator+(Color a, Color b)
 {
     return Color{a.red + b.red, a.green + b.green, a.blue + b.blue};
+}
+
+inline std::ostream &operator<<(std::ostream &out, const Color &c)
+{
+    return out << "rgb(" << c.red << ", " << c.green << ", " << c.blue << ")";
+
 }
 
 #endif //PROJECT_GRADE_8_COLOR_H

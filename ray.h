@@ -20,10 +20,15 @@ public:
         return orig + t*dir;
     }
 
+
 public:
     point3d orig;
     vec3 dir;
 };
 
+inline std::ostream &operator<<(std::ostream &out, const ray &r)
+{
+    return out << "orig: (" << r.orig << ", vec: " << r.dir;
+}
 
 #endif //PROJECT_GRADE_8_RAY_H
