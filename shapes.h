@@ -14,7 +14,7 @@ public:
     point3d center;
     double radius;
 
-    double hit(const ray &r) {
+    double hit(const ray &r, double t_min, double t_max) {
         point3d oc = r.origin() - center;
         auto a = r.direction().dot(r.direction());
         auto b = 2.0 * oc.dot(r.direction());

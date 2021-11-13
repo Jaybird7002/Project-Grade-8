@@ -77,6 +77,30 @@ public:
     inline vec3 scale(const double t) const {
         return vec3(t * this->x, t * this->y, t * this->z);
     }
+
+    inline static double random_double(double d, double d1)
+    {
+        static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+        static std::mt19937 generator;
+        return distribution(generator);
+    }
+
+    //inline vec3 random() {
+    //    return vec3(random_double(), random_double(), random_double());
+    //}
+
+    inline static vec3 random(double min, double max) {
+        return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+    }
+
+    inline static vec3 random_in_unit_sphere() {
+        while (true) {
+            auto p = vec3::random(-1,1);
+            if (p.length_squared() >= 1) continue;
+            return p;
+        }
+    }
+
 };
 struct point3d
 {
@@ -210,12 +234,5 @@ inline point3d operator-(const point3d &a, const point3d &b)
 {
     return point3d{a.x_ - b.x_, a.y_ - b.y_, a.z_ - b.z_};
 }
-
-inline double clamp(double x, double min, double max) {
-    if (x < min) return min;
-    if (x > max) return max;
-    return x;
-}
-
 
 #endif //PROJECT_GRADE_8_VECTOR_POINT_H

@@ -6,83 +6,69 @@
 #include "scene.h"
 #include "ray.h"
 #include "shapes.h"
+#include "Camera.h"
+
 
 Color gradiant(int x_, int y_, int width, int height) {
-    return Color{ (double)y_ / -height, (double)y_ / -height, (double)y_ / height};
+    //return Color{ 0 , 0 , 1};
+    return Color{ 0.25, 0, (double)(height - y_) / height};
 }
 
-const auto aspect_ratio = 4.0 / 3.0 ;//16.0 / 9.0;
+inline double random_double() {
+    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+    static std::mt19937 generator;
+    return distribution(generator);
+}
+
+#define HQ 1
+
+//const auto aspect_ratio = 4.0 / 3.0 ;
+const auto aspect_ratio = 16.0 / 9.0;
+
+#ifdef HQ
+const int image_width = 960;
+const int samples_per_pixel = 100;
+const int default_depth = 10;
+#else
 const int image_width = 300;
+const int samples_per_pixel = 10;
+const int default_depth = 10;
+#endif
+
 const int image_height = static_cast<int>(image_width / aspect_ratio);
-
-// Camera
-
-auto viewport_height = 2.0;
-auto viewport_width = aspect_ratio * viewport_height;
 auto focal_length = 1.0;
-
-auto origin = point3d{0, 0, 0};
-auto horizontal = vec3(viewport_width, 0, 0);
-auto vertical = vec3(0, viewport_height, 0);
-auto lower_left_corner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focal_length);
+auto viewport_height = 2.0;
 
 int main()
 {
-    point3d pointA = {1, 1, 0};
-
-    //test point b for line
-    point3d pointB = {5, 1, 0};
-
-    //test point c for triangle
-    point3d pointC = {1, 4, 0};
-
-    //test line
-    line3d lineA = { pointA, pointB };
-    lineA.length();
-
-    //test triangle
-    triangle3d triangleA = triangle3d { pointA, pointB, pointC };
-
-    //output
-    std::cout << "point A: " << pointA << std::endl;
-    std::cout << "point B: " << pointB << std::endl;
-
-    std::cout << "line A length: " << lineA.length() << std::endl;
-
-    std::cout << "triangle info: A: " << triangleA.va_ << ", B: " << triangleA.vb_ << ", C: "
-        << triangleA.vc_<< std::endl;
-    std::cout << triangleA.normal().b_ << std::endl;
-
+    Camera cam = Camera(aspect_ratio, focal_length, viewport_height);
 
     Scene the_scene = Scene{};
     the_scene.add_thing(Sphere { point3d{0.0, 0.0, -1.0}, 0.5});
-    the_scene.add_thing(Sphere { point3d{0.7, 0.5, -1.5}, 0.5});
-    the_scene.add_thing(Sphere { point3d{-0.7, 0.5, -1.5}, 0.5});
     the_scene.add_thing(Sphere { point3d{0,-100.5,-1}, 100});
 
     std::cout << "Camera: " << the_scene.viewPoint;
     std::cout << "image: " << image_width << "x" << image_height << "\n";
 
-//    int image_width = 300;
-//    int image_height = 200;
     Image image = Image(image_width, image_height);
 
     for (int i = 0.0; i < image_width; i++) {
         for (int j = 0.0; j < image_height; j++) {
-            auto u = double(i) / (image_width-1);
-            auto v = double(j) / (image_height-1);
-            const vec3 &dp_horiz = u * horizontal;
-            const vec3 &dp_vert = v * vertical;
-            const point3d &d = lower_left_corner + dp_horiz;
-            const point3d &e = d + dp_vert;
-            point3d dest_point = e - origin;
-            //std::cout << "dest (" << u << ", " << v << "): " << dest_point << "\n";
-            ray r(origin, dest_point.to_vec3());
-            //std::cout << "ray (" << i << ", " << j << "): " << r << "\n";
-            Color pixel_color = the_scene.ray_color(r, gradiant(i, j, image_width, image_height));
+            Color pixel_color;
+            const Color &default_bg = gradiant(i, j, image_width, image_height);
+            for (int s = 0; s < samples_per_pixel; ++s) {
+                auto u = (double(i) + random_double()) / (image_width - 1);
+                auto v = (double(j) + random_double()) / (image_height - 1);
+                ray r = cam.get_ray(u, v);
+                pixel_color = pixel_color + the_scene.ray_color(r, default_bg, default_depth);
+            }
+            pixel_color = pixel_color / samples_per_pixel;
             image.set_pixel(i,j, pixel_color);
         }
+        if (i > 0 && i % 80 == 0) std::cout << " " << i << "\n";
+        std::cout << ".";
+        std::cout.flush();
     }
-
+    std::cout << " " << image_width << "\n";
     image.save("raytrace.png");
 }
