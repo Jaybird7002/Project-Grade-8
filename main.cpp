@@ -8,10 +8,9 @@
 #include "shapes.h"
 #include "Camera.h"
 
-
 Color gradiant(int x_, int y_, int width, int height) {
     //return Color{ 0 , 0 , 1};
-    return Color{ 0.25, 0, (double)(height - y_) / height};
+    return Color{ (double)(x_) / (width), (double)(y_) / height, 0.25};
 }
 
 inline double random_double() {
@@ -20,7 +19,7 @@ inline double random_double() {
     return distribution(generator);
 }
 
-#define HQ 1
+//#define HQ 1
 
 //const auto aspect_ratio = 4.0 / 3.0 ;
 const auto aspect_ratio = 16.0 / 9.0;
@@ -30,8 +29,8 @@ const int image_width = 960;
 const int samples_per_pixel = 100;
 const int default_depth = 10;
 #else
-const int image_width = 300;
-const int samples_per_pixel = 10;
+const int image_width = 600;
+const int samples_per_pixel = 5;
 const int default_depth = 10;
 #endif
 
@@ -41,14 +40,23 @@ auto viewport_height = 2.0;
 
 int main()
 {
-    Camera cam = Camera(aspect_ratio, focal_length, viewport_height);
+   //materials metal = materials { 0.9, Color { 0.0, 0.0, 0.0}};
+   materials grey_matte = materials { 0.3, Color { 0.3, 0.3, 0.3}};
+   materials red_matte = materials { 0.3, Color { 1, 0.1, 0.1}};
+   materials green_matte = materials { 0.3, Color { 0.1, 1, 0.1}};
+   materials blue_matte = materials { 0.3, Color { 0.1, 0.1, 1}};
+   materials grass = materials {0.3, Color {0.2, 0.2, 0.2}};
 
-    Scene the_scene = Scene{};
-    the_scene.add_thing(Sphere { point3d{0.0, 0.0, -1.0}, 0.5});
-    the_scene.add_thing(Sphere { point3d{0,-100.5,-1}, 100});
+   Camera cam = Camera(aspect_ratio, focal_length, viewport_height);
+
+   Scene the_scene = Scene{};
+   the_scene.add_thing(Sphere { point3d{0.0, 0.0, -1.0}, 0.5, grey_matte}); //the one in front
+   the_scene.add_thing(Sphere { point3d{1.0, -0.25, -1.5}, 0.25, grey_matte}); //the one on the right
+   the_scene.add_thing(Sphere { point3d{-1.0, -0.25, -1.5}, 0.25, grey_matte}); //the one on the left
+   the_scene.add_thing(Sphere { point3d{0.0,-100.5,-1}, 100, grass}); //ground DO NOT TOUCH (please)
 
     std::cout << "Camera: " << the_scene.viewPoint;
-    std::cout << "image: " << image_width << "x" << image_height << "\n";
+    std::cout << "image: " << image_width << " x " << image_height << "\n";
 
     Image image = Image(image_width, image_height);
 
@@ -69,6 +77,7 @@ int main()
         std::cout << ".";
         std::cout.flush();
     }
-    std::cout << " " << image_width << "\n";
+    std::cout << " " << image_width << std::endl;
+    std::cerr << "Complete\n";
     image.save("raytrace.png");
 }

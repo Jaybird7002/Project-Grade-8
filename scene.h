@@ -7,13 +7,14 @@
 
 #include "shapes.h"
 #include "ray.h"
-#include "scene.h"
+#include "vector_point.h"
+#include "Materials.h"
 
 #include <vector>
 
 class Scene
 {
-
+    materials material;
     std::vector<Sphere> things;
 
 public:
@@ -31,19 +32,17 @@ public:
                 min_t = t;
                 in_front = i;
             }
-//            point3d target = rec.p + rec.normal + random_in_unit_sphere();
-//            return 0.5 * ray_color(ray(rec.p, target - rec.p), world);
 
         }
+
         if (min_t > 0.0) {
-            //1. need the point that intersected the sphere (rec.p)
-            //2. need the normal from the point (rec.normal)
-            //3. return 0.5 * ray_color(ray(...), default_color, depth-1);
             Sphere &hit = things[in_front];
             auto p = r.at(min_t);
-            auto normal = p - hit.center;// + vec3::random_in_unit_sphere();
-            return 0.5 * ray_color(ray(p, normal.to_vec3()), default_color, depth-1);
-            //return things[in_front].color_at(r.at(min_t));
+            auto normal = p - hit.center;
+//            return 0.5 * ray_color(ray(p, normal.to_vec3()), default_color, depth-1);
+            point3d target = p + normal + vec3::random_in_unit_sphere();
+            return hit.material.reflectivity * (
+                   ray_color(ray(p, (target - p).to_vec3()), hit.material.color, depth-1));
         }
 
         return default_color;

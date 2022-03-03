@@ -101,6 +101,10 @@ public:
         }
     }
 
+    vec3 random_unit_vector() {
+        return (random_in_unit_sphere()).unit_vector();
+    }
+
 };
 struct point3d
 {

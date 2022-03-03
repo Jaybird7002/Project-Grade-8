@@ -8,11 +8,13 @@
 #import "vector_point.h"
 #include "ray.h"
 #include <random>
+#include "Materials.h"
 
 class Sphere {
 public:
     point3d center;
     double radius;
+    materials material;
 
     double hit(const ray &r, double t_min, double t_max) {
         point3d oc = r.origin() - center;
