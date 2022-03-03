@@ -7,6 +7,7 @@
 #include <FreeImagePlus.h>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 const int DEFAULT_BPP = 8;
 const double BPP_MAX = (double) (1 << DEFAULT_BPP) - 0.0001;
@@ -47,9 +48,12 @@ void Image::save(const std::string &filename) {
         for (int j = 0; j < height; j++) {
             Color pixel = pixels[j * width + i];
 
-            savePixel.rgbRed = static_cast<BYTE>(pixel.red * BPP_MAX);
-            savePixel.rgbGreen = static_cast<BYTE>(pixel.green * BPP_MAX);
-            savePixel.rgbBlue = static_cast<BYTE>(pixel.blue * BPP_MAX);
+            savePixel.rgbRed = static_cast<BYTE>(sqrt(pixel.red) * BPP_MAX);
+            savePixel.rgbGreen = static_cast<BYTE>(sqrt(pixel.green) * BPP_MAX);
+            savePixel.rgbBlue = static_cast<BYTE>(sqrt(pixel.blue) * BPP_MAX);
+//            savePixel.rgbRed = static_cast<BYTE>(pixel.red * BPP_MAX);
+//            savePixel.rgbGreen = static_cast<BYTE>(pixel.green * BPP_MAX);
+//            savePixel.rgbBlue = static_cast<BYTE>(pixel.blue * BPP_MAX);
 
             output.setPixelColor(i, j, &savePixel);
         }
